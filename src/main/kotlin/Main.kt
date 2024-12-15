@@ -13,7 +13,7 @@ fun main() {
                 if (parts[1] in builtins) {
                     println("${parts[1]} is a shell builtin")
                 } else {
-                    println("${parts[1]}: command not found")
+                    println("${parts[1]}: not found")
                 }
             else -> println("$input: command not found")
         }
