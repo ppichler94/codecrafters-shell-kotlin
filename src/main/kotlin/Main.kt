@@ -2,6 +2,11 @@ fun main() {
     while (true) {
         print("$ ")
         val input = readln() // Wait for user input
-        println("$input: command not found")
+        val parts = input.split(" ")
+
+        when (parts.first()) {
+            "exit" -> return
+            else -> println("$input: command not found")
+        }
     }
 }
