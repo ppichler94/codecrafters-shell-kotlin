@@ -6,6 +6,7 @@ fun main() {
 
         when (parts.first()) {
             "exit" -> return
+            "echo" -> println(parts.drop(1).joinToString(" "))
             else -> println("$input: command not found")
         }
     }
