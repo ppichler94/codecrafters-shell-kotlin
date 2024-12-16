@@ -1,3 +1,4 @@
+import java.io.File
 import kotlin.system.exitProcess
 
 sealed interface Command {
@@ -12,9 +13,22 @@ data object Type : Command {
     override fun invoke(arguments: List<String>) {
         if (arguments.first() in CommandNames.entries.map { it.value }) {
             println("${arguments.first()} is a shell builtin")
-        } else {
-            println("${arguments.first()}: not found")
+            return
         }
+        findInPath(arguments.first())?.let { path ->
+            println("${arguments.first()} is $path")
+            return
+        }
+        println("${arguments.first()}: not found")
+    }
+
+    private fun findInPath(name: String): String? {
+        for (path in System.getenv("PATH").split(":")) {
+            if (File("$path/$name").exists()) {
+                return "$path/$name"
+            }
+        }
+        return null
     }
 }
 
