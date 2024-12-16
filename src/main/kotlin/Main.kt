@@ -21,15 +21,6 @@ data object Type : Command {
         }
         println("${arguments.first()}: not found")
     }
-
-    private fun findInPath(name: String): String? {
-        for (path in System.getenv("PATH").split(":")) {
-            if (File("$path/$name").exists()) {
-                return "$path/$name"
-            }
-        }
-        return null
-    }
 }
 
 data object Exit : Command {
@@ -45,6 +36,24 @@ enum class CommandNames(
     TYPE("type", Type),
 }
 
+private fun findInPath(name: String): String? {
+    for (path in System.getenv("PATH").split(":")) {
+        if (File("$path/$name").exists()) {
+            return "$path/$name"
+        }
+    }
+    return null
+}
+
+private fun runProgram(
+    path: String,
+    arguments: List<String>,
+) {
+    val process = ProcessBuilder(listOf(path) + arguments).start()
+    process.waitFor()
+    print(process.inputStream.bufferedReader().readText())
+}
+
 fun main() {
     while (true) {
         print("$ ")
@@ -55,6 +64,12 @@ fun main() {
 
         if (command != null) {
             command(parts.drop(1))
+            continue
+        }
+
+        val path = findInPath(parts.first())
+        if (path != null) {
+            runProgram(path, parts.drop(1))
         } else {
             println("$input: command not found")
         }
